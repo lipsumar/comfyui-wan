@@ -116,7 +116,8 @@ download_model() {
     mkdir -p "$target_dir"
     if [ ! -f "$target_dir/$filename" ]; then
         echo "Downloading $filename..."
-        wget -q --show-progress -O "$target_dir/$filename" "$url"
+        wget -q -O "$target_dir/$filename" "$url"
+        echo "Downloaded $filename."
     else
         echo "$filename already exists, skipping."
     fi
