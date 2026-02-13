@@ -35,15 +35,15 @@ Use Docker Buildx Bake with the provided HCL file.
 
 - `regular` (default production):
   - Dockerfile: `Dockerfile`
-  - Tag: `runpod/comfyui:${TAG}` (defaults to `slim`)
+  - Tag: `lipsumar/comfyui-wan:${TAG}` (defaults to `slim`)
   - Platform: `linux/amd64`
 - `dev` (local testing):
   - Dockerfile: `Dockerfile`
-  - Tag: `runpod/comfyui:dev`
+  - Tag: `lipsumar/comfyui-wan:dev`
   - Output: local docker image (not pushed)
 - `rtx5090` (CUDA 12.8 + latest torch):
   - Dockerfile: `Dockerfile.5090`
-  - Tag: `runpod/comfyui:${TAG}-5090`
+  - Tag: `lipsumar/comfyui-wan:${TAG}-5090`
 
 Example commands:
 
@@ -139,7 +139,7 @@ Preinstalled custom nodes (initial set):
     -e PUBLIC_KEY="$(cat ~/.ssh/id_rsa.pub)" \
     -e JUPYTER_PASSWORD=yourtoken \
     -v "$PWD/workspace":/workspace \
-    runpod/comfyui:dev
+    lipsumar/comfyui-wan:dev
   ```
 - Mount a host `workspace` to persist ComfyUI, args, and FileBrowser DB.
 
