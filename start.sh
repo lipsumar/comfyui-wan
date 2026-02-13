@@ -106,6 +106,22 @@ start_jupyter() {
     echo "Jupyter Lab started"
 }
 
+# Download a file to a target directory (skips if already exists)
+# Usage: download_model <url> <target_dir>
+download_model() {
+    local url="$1"
+    local target_dir="$2"
+    local filename=$(basename "$url")
+
+    mkdir -p "$target_dir"
+    if [ ! -f "$target_dir/$filename" ]; then
+        echo "Downloading $filename..."
+        wget -q --show-progress -O "$target_dir/$filename" "$url"
+    else
+        echo "$filename already exists, skipping."
+    fi
+}
+
 # ---------------------------------------------------------------------------- #
 #                               Main Program                                     #
 # ---------------------------------------------------------------------------- #
@@ -162,7 +178,11 @@ if [ ! -d "$COMFYUI_DIR" ] || [ ! -d "$VENV_DIR" ]; then
     CUSTOM_NODES=(
         "https://github.com/kijai/ComfyUI-KJNodes"
         "https://github.com/MoonGoblinDev/Civicomfy"
-        "https://github.com/MadiatorLabs/ComfyUI-RunpodDirect"
+        "https://github.com/MadiatorLabs/ComfyUI-RunpodDirect",
+        "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite",
+        "https://github.com/Fannovel16/ComfyUI-Frame-Interpolation",
+        "https://github.com/shootthesound/comfyUI-LongLook",
+        "ComfyUi-Scale-Image-to-Total-Pixels-Advanced"
     )
 
     for repo in "${CUSTOM_NODES[@]}"; do
@@ -218,6 +238,22 @@ if [ ! -d "$COMFYUI_DIR" ] || [ ! -d "$VENV_DIR" ]; then
                 fi
             fi
         done
+
+        # ------------------------------------------------------------------ #
+        #                        Download Models                               #
+        # ------------------------------------------------------------------ #
+        MODELS_DIR="$COMFYUI_DIR/models"
+
+        # Example usage — add your models here:
+        # download_model "https://huggingface.co/user/repo/resolve/main/model.safetensors" "$MODELS_DIR/checkpoints"
+        # download_model "https://example.com/lora.safetensors" "$MODELS_DIR/loras"
+        # download_model "https://example.com/controlnet.safetensors" "$MODELS_DIR/controlnet"
+        download_model "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors" "$MODELS_DIR/text_encoders"
+        download_model "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors" "$MODELS_DIR/vae"
+        download_model "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_high_noise_14B_fp8_scaled.safetensors" "$MODELS_DIR/diffusion_models"
+        download_model "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/diffusion_models/wan2.2_i2v_low_noise_14B_fp8_scaled.safetensors" "$MODELS_DIR/diffusion_models"
+        download_model "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors" "$MODELS_DIR/loras"
+        download_model "https://huggingface.co/Comfy-Org/Wan_2.2_ComfyUI_Repackaged/resolve/main/split_files/loras/wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors" "$MODELS_DIR/loras"
     fi
 else
     # Just activate the existing venv
